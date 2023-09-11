@@ -3,9 +3,14 @@ name: "Build"
 on:
   push:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  BESU_VERSION: 23.7.0
+
 jobs:
   build:
-    name: 'build jar'
+    name: 'build and push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,7 +21,21 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: build image
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build jar
+        run: ./gradlew jar
+
+      - name: build docker image
         run: ./gradlew docker
 
-
+      - name: push docker image
+        run: |
+          docker images
+          docker tag no-pending-transactions-plugin:${{env.BESU_VERSION}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.BESU_VERSION}}  
+          docker push ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.BESU_VERSION}}

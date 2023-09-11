@@ -1,7 +1,8 @@
-# besu-pending-transactions
+# besu-no-transactions-plugin
 
-to run locally
+What would happen if you were running a validator that didn't propagate transactions? 
 
-`./gradlew check` 
 
-this will build everything 
+`./gradlew build docker` 
+
+ 
