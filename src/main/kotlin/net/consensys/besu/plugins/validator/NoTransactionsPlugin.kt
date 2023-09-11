@@ -19,7 +19,7 @@ class NoTransactionsPlugin : BesuPlugin {
 
     private fun isMessagePermitted(destinationEnode: EnodeURL, code: Int): Boolean {
         if (code == MessageCode.Transactions.code) {
-            logger.info("Blocking Transactions to $destinationEnode")
+            logger.debug("Blocking Transactions to $destinationEnode")
 
             return false
         }
